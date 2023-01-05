@@ -1,11 +1,21 @@
-
 import cv2
-import serial,time
+import serial
+import time
 
 face_cascade = cv2.CascadeClassifier('Risorse/haarscascade_frontalface_default.xml')
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
-serialPort = serial.Serial('com11', 9600, timeout=0.1)
+if not cap.isOpened():
+    print("Cannot open camera")
+    exit()
+
+width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+print("Width:", width)
+print("Height:", height)
+
+serialPort = serial.Serial('/dev/cu.usbmodem103', 9600, timeout=0.1)
 
 time.sleep(1)
 
@@ -14,7 +24,7 @@ while cap.isOpened():
     frame = cv2.flip(frame, 1)  # mirror the image
     # print(frame.shape)
 
-    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     faces = face_cascade.detectMultiScale(gray, 1.1, 6)  # detect the face
 
@@ -33,7 +43,7 @@ while cap.isOpened():
 
     # plot the squared region in the center of the screen
 
-    cv2.rectangle(frame, (640//2-30, 480//2-30), (640//2+30, 480//2+30), (0, 255, 0), 2)
+    cv2.rectangle(frame, (int(width)//2-30, int(height)//2-30), (int(width)//2+30, int(height)//2+30), (0, 255, 0), 2)
 
     # out.write(frame)
 
@@ -41,8 +51,9 @@ while cap.isOpened():
 
     # press q to Quit
 
-    if cv2.waitKey(10) & 0xFF == ord('q'):
+    if (cv2.waitKey(10) & 0xFF) == ord('q'): # only the first 8 bit
         break
 
 cap.release()
 cv2.destroyAllWindows()
+
