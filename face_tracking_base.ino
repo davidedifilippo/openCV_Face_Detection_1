@@ -4,7 +4,7 @@
 #include<Servo.h>
 
 Servo x, y;
-int width = 640, height = 480;  // total resolution of the video
+int width = 1280, height = 720;  // total resolution of the video!!! It depends on camera device resolution
 int xpos = 90, ypos = 90;  // initial positions of both Servos
 void setup() {
 
